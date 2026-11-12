@@ -1,5 +1,5 @@
 from scipy import signal
-
+import matplotlib.pyplot as plt
 
 def closed_loop(gamma1, omega0, Kp, Ki, Ks=1.0, Kf=0.0):
     """Linearized closed-loop transfer function, Eq. (9).
@@ -13,10 +13,16 @@ def closed_loop(gamma1, omega0, Kp, Ki, Ks=1.0, Kf=0.0):
 
 
 if __name__ == "__main__":
-    H = closed_loop(gamma1=1.0, omega0=2.0, Kp=0.5, Ki=0.5)  # sAIF (Kf = 0)
+    H = closed_loop(gamma1=1.0, omega0=2.0, Kp=0.0, Ki=0.5)  # sAIF (Kf = 0)
     t, y = signal.step(H)
     print("poles:", H.poles)
     print(f"final value: {y[-1]:.3f} (expect 1/Ks = 1)")
+    plt.plot(t, y)
+    plt.grid()
+    plt.xlabel('Time (s)')
+    plt.ylabel('Output')
+    plt.show()
+
 
 
 # Note From Luke
