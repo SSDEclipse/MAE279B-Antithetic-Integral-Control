@@ -1,5 +1,6 @@
 from scipy import signal
 import matplotlib.pyplot as plt
+import numpy as np
 
 def closed_loop(gamma1, omega0, Kp, Ki, Ks=1.0, Kf=0.0):
     """Linearized closed-loop transfer function, Eq. (9).
@@ -13,14 +14,40 @@ def closed_loop(gamma1, omega0, Kp, Ki, Ks=1.0, Kf=0.0):
 
 
 if __name__ == "__main__":
-    H = closed_loop(gamma1=1.0, omega0=2.0, Kp=0.0, Ki=0.5)  # sAIF (Kf = 0)
-    t, y = signal.step(H)
-    print("poles:", H.poles)
+    H = closed_loop(gamma1=1.0, omega0=2.0, Kp=1.0, Ki=2.0)  # sAIF (Kf = 0)
+    t, y = signal.step(H, N=1000)
+    poles = H.poles
+    print("poles:", poles.imag)
     print(f"final value: {y[-1]:.3f} (expect 1/Ks = 1)")
+
+    rl_poles = []
+    rl_num_gains = 1000
+    rl_kps = np.linspace(0, 1000, rl_num_gains)
+    rl_kis = np.linspace(0, 0.5, rl_num_gains)
+    for i in range(rl_num_gains):
+        H = closed_loop(gamma1=1.0, omega0=1.5, Kp=0, Ki=rl_kis[i])
+        rl_poles.append(H.poles)
+
+    plt.figure()
     plt.plot(t, y)
     plt.grid()
     plt.xlabel('Time (s)')
     plt.ylabel('Output')
+    plt.title('Step Response')
+
+    plt.figure()
+
+    for i in range(len(rl_poles[0])):
+        reals = []
+        imags = []
+        for j in range(len(rl_poles)):
+            reals.append(rl_poles[j][i].real)
+            imags.append(rl_poles[j][i].imag)
+        plt.plot(reals, imags, marker='x')
+    plt.grid()
+    plt.xlabel('Real')
+    plt.ylabel('Imaginary')
+    plt.title('Root Locus')
     plt.show()
 
 
