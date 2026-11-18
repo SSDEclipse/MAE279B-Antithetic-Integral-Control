@@ -24,8 +24,9 @@ if __name__ == "__main__":
     rl_num_gains = 1000
     rl_kps = np.linspace(0, 1000, rl_num_gains)
     rl_kis = np.linspace(0, 0.5, rl_num_gains)
+    rl_kfs = np.linspace(0, 10, rl_num_gains)
     for i in range(rl_num_gains):
-        H = closed_loop(gamma1=1.0, omega0=1.5, Kp=0, Ki=rl_kis[i])
+        H = closed_loop(gamma1=1.0, omega0=1.5, Kp=0, Ki=rl_kis[i], Kf=0)
         rl_poles.append(H.poles)
 
     plt.figure()
